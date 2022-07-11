@@ -2,7 +2,7 @@
  * @Author: Ryu-59073
  * @Date: 2022-07-11 00:48:05
  * @LastEditors: Ryu-59073
- * @LastEditTime: 2022-07-11 01:29:20
+ * @LastEditTime: 2022-07-11 08:40:09
  * @FilePath: /Acid/acid/dict_tree.h
  * @Description: 字典树类，提供O(len(key))复杂度的数据串键值对查找、插入的数据结构
  * 
@@ -16,11 +16,12 @@
 #include <memory>
 #include <vector>
 #include <functional>
+#include <cstdlib>
 
 
 namespace acid {
 class Logger;
-class DictTree{
+class DictTree: public std::enable_shared_from_this<DictTree>{
 public:
     using ptr = std::shared_ptr<DictTree>;
 
@@ -49,7 +50,7 @@ public:
     std::shared_ptr<Logger> getLogger() {
         return m_logger;
     }
-    std::shared_ptr<DictTree> getNext(char c) {
+    DictTree::ptr getNext(char c) {
         return m_children[c];
     }
     const std::vector<std::shared_ptr<Logger>> getAllLoggers() {
@@ -66,14 +67,13 @@ public:
                 dfs(val);
             }
         };
-        DictTree::ptr sp(this);
-        dfs(sp);
+        dfs(shared_from_this());
         return ret;
     }
 
-    std::pair<bool, std::shared_ptr<Logger>> find(std::string name) {
+    std::pair<bool, std::shared_ptr<Logger>> find(const std::string& name) {
         int32_t n = name.size();
-        DictTree::ptr cur(this);
+        DictTree::ptr cur = shared_from_this();
         for(int32_t i = 0; i < n; ++ i) {
             if(cur->check(name[i]) == false) {
                 return {false, nullptr};
@@ -86,9 +86,10 @@ public:
         return {false, nullptr};
     }
 
-    void insert(std::string name, std::shared_ptr<Logger> logger) {
+    void insert(const std::string& name, std::shared_ptr<Logger> logger) {
         int32_t n = name.size();
-        DictTree::ptr cur(this);
+        DictTree::ptr cur;
+        cur = shared_from_this();
         for(int32_t i = 0; i < n; ++ i) {
             if(cur->check(name[i]) == false) {
                 cur->setChild(name[i]);

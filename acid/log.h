@@ -248,7 +248,6 @@ public:
 private:
     Logger::ptr m_root;
     MutexType m_mutex;
-    // std::map<std::string ,Logger::ptr> m_loggers;
     DictTree::ptr m_loggers;
 };
 

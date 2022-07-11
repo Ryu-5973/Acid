@@ -684,10 +684,9 @@ struct LogIniter{
 
 static LogIniter __log_init;
 
-LogManager::LogManager() {
+LogManager::LogManager(): m_loggers(new DictTree){
     m_root.reset(new Logger());
     m_root->addAppender(std::make_shared<StdoutLogAppender>());
-    m_loggers = std::make_shared<DictTree>();
     m_loggers->insert("root", m_root);
 }
 
