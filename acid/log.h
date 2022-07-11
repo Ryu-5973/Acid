@@ -15,7 +15,7 @@
 #include "util.h"
 #include "thread.h"
 // 日志系统的五个级别DEBUG, INFO, WARN, ERROR, FATAL
-#define ACID_LOG_LEVEL(logger,level)    \ 
+#define ACID_LOG_LEVEL(logger,level)    \
     if(level >= logger->getLevel())           \
         acid::LogEventWrap(std::make_shared<acid::LogEvent>( \
         logger,level,__FILE__,__LINE__,acid::GetThreadId(),acid::GetFiberId(), \

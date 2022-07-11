@@ -177,5 +177,6 @@ private:
     std::shared_ptr<ChannelImpl<T>> m_channel;
 };
 
+
 }
 #endif //ACID_CHANNEL_H
