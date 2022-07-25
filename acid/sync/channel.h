@@ -24,7 +24,7 @@ public:
      * @return 返回调用结果
      */
     bool push(const T& t) {
-        CoMutex::Lock lock(m_mutex);
+        CoMutex::Lock lock(m_pushMtx);
         if (m_isClose) {
             return false;
         }
@@ -46,7 +46,7 @@ public:
      * @return 返回调用结果
      */
     bool pop(T& t) {
-        CoMutex::Lock lock(m_mutex);
+        CoMutex::Lock lock(m_popMtx);
         if (m_isClose) {
             return false;
         }
@@ -77,7 +77,8 @@ public:
      * @brief 关闭 Channel
      */
     void close() {
-        CoMutex::Lock lock(m_mutex);
+        CoMutex::Lock lock(m_pushMtx);
+        CoMutex::Lock lock1(m_popMtx);
         if (m_isClose) {
             return;
         }
@@ -98,7 +99,8 @@ public:
     }
 
     size_t size() {
-        CoMutex::Lock lock(m_mutex);
+        CoMutex::Lock lock(m_pushMtx);
+        CoMutex::Lock lock1(m_popMtx);
         return m_queue.size();
     }
 
@@ -109,8 +111,8 @@ private:
     bool m_isClose;
     // Channel 缓冲区大小
     size_t m_capacity;
-    // 协程锁和协程条件变量配合使用保护消息队列
-    CoMutex m_mutex;
+    // 进出队列协程锁
+    CoMutex m_pushMtx, m_popMtx;
     // 入队条件变量
     CoCondVar m_pushCv;
     // 出队条件变量
