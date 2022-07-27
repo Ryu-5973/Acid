@@ -684,10 +684,10 @@ struct LogIniter{
 
 static LogIniter __log_init;
 
-LogManager::LogManager() {
+LogManager::LogManager(): m_loggers(new DictTree){
     m_root.reset(new Logger());
     m_root->addAppender(std::make_shared<StdoutLogAppender>());
-    m_loggers["root"]  = m_root;
+    m_loggers->insert("root", m_root);
 }
 
 void LogManager::init() {
@@ -696,26 +696,25 @@ void LogManager::init() {
 
 Logger::ptr LogManager::getLogger(const std::string &name) {
     MutexType::Lock lock(m_mutex);
-    auto it = m_loggers.find(name);
-    if(it != m_loggers.end())
-        return it->second;
-    Logger::ptr logger = std::make_shared<Logger>(name);
-    //logger->addAppender(std::make_shared<StdoutLogAppender>());
-    logger->m_root = m_root;
-    m_loggers[name] = logger;
-    return logger;
+    auto [res, logger] = m_loggers->find(name);
+    if(res == true)
+        return logger;
+    Logger::ptr new_logger = std::make_shared<Logger>(name);
+    new_logger->m_root = m_root;
+    m_loggers->insert(name, new_logger);
+    return new_logger;
 }
 
 void LogManager::setLogger(Logger::ptr logger) {
     MutexType::Lock lock(m_mutex);
-    m_loggers[logger->getName()] = logger;
+    m_loggers->insert(logger->getName(), logger);
 }
 
 YAML::Node LogManager::toYaml() {
     MutexType::Lock lock(m_mutex);
     YAML::Node res;
-    for(auto & logger : m_loggers){
-        res["logs"].push_back(logger.second->toYaml());
+    for(auto & logger : m_loggers->getAllLoggers()){
+        res["logs"].push_back(logger->toYaml());
     }
     return res;
 }

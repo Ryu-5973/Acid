@@ -14,6 +14,8 @@
 #include "singleton.h"
 #include "util.h"
 #include "thread.h"
+#include "dict_tree.h"
+
 // 日志系统的五个级别DEBUG, INFO, WARN, ERROR, FATAL
 #define ACID_LOG_LEVEL(logger,level)    \
     if(level >= logger->getLevel())           \
@@ -246,7 +248,7 @@ public:
 private:
     Logger::ptr m_root;
     MutexType m_mutex;
-    std::map<std::string ,Logger::ptr> m_loggers;
+    DictTree::ptr m_loggers;
 };
 
 using LogMgr = SingletonPtr<LogManager>;
