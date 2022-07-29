@@ -41,7 +41,6 @@ bool FdCtx::init() {
         m_isInit = true;
         m_isSocket = S_ISSOCK(fd_state.st_mode);
     }
-    m_userNonblock = false;
     if(m_isSocket){
         int flags = fcntl_f(m_fd, F_GETFL, 0);
         if(!(flags & O_NONBLOCK)) {
