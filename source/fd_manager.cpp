@@ -41,16 +41,18 @@ bool FdCtx::init() {
         m_isInit = true;
         m_isSocket = S_ISSOCK(fd_state.st_mode);
     }
+    m_userNonblock = false;
     if(m_isSocket){
         int flags = fcntl_f(m_fd, F_GETFL, 0);
         if(!(flags & O_NONBLOCK)) {
             fcntl_f(m_fd, F_SETFL, flags | O_NONBLOCK);
-        }
+            m_userNonblock = false;
+        }else m_userNonblock = true;
         m_sysNonblock = true;
     } else {
         m_sysNonblock = false;
+        m_userNonblock = false;
     }
-    m_userNonblock = false;
     m_isClosed = false;
     return m_isInit;
 }
