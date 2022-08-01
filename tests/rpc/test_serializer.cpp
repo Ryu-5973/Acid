@@ -7,6 +7,7 @@
 #include "acid/log.h"
 #include "acid/config.h"
 #include <iostream>
+#include <tuple>
 static acid::Logger::ptr g_logger = ACID_LOG_ROOT();
 void test1() {
     acid::rpc::Serializer s;
@@ -98,6 +99,31 @@ void test9() {
     test_map(a);
 }
 
+void log_tuple() {}
+
+template<typename T, typename ...Args>
+void log_tuple(T&& item, Args&& ...args) {
+    ACID_LOG_INFO(g_logger) << std::forward<T>(item);
+    log_tuple(args...);
+}
+
+void test10() {
+    auto t = std::make_tuple(false, 1, 2.0, std::string("3"), std::string("四"));
+
+    acid::rpc::Serializer s;
+    s << t;
+    s.reset();
+    decltype(t) t1;
+    s >> t1;
+    std::apply([](auto &&... args){
+        log_tuple(args...);
+    }, std::move(t));
+    std::apply([](auto &&... args){
+        log_tuple(args...);
+    }, std::move(t1));
+    // s >> t1;
+}
+
 void seq2seq() {
     std::vector<std::string> a{"ab","cd"};
     acid::rpc::Serializer s;
@@ -113,5 +139,6 @@ void map2map() {
 }
 
 int main() {
-    test6();
+    // test6();
+    test10();
 }

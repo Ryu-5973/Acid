@@ -177,11 +177,9 @@ public:
         /**
          * @brief 实际的反序列化函数，利用折叠表达式展开参数包
          */
-        const auto& deserializer = [this]<typename Tuple, std::size_t... Index>
-        (Tuple& t, std::index_sequence<Index...>) {
-            (void)((*this) >> ... >> std::get<Index>(t));
-        };
-        deserializer(t, std::index_sequence_for<Args...>{});
+        std::apply([this](auto &&... args) {
+            ((*this) >> ... >> args);
+        }, std::move(t));
         return *this;
     }
 
@@ -190,11 +188,9 @@ public:
         /**
          * @brief 实际的序列化函数，利用折叠表达式展开参数包
          */
-        const auto& package = [this]<typename Tuple, std::size_t... Index>
-        (const Tuple& t, std::index_sequence<Index...>) {
-            (void)((*this) << ... << std::get<Index>(t));
-        };
-        package(t, std::index_sequence_for<Args...>{});
+        std::apply([this](auto &&... args) {
+            ((*this) << ... << args);
+        }, std::move(t));
         return *this;
     }
 
