@@ -177,9 +177,9 @@ public:
         /**
          * @brief 实际的反序列化函数，利用折叠表达式展开参数包
          */
-        std::apply([this](auto &&... args) {
-            ((*this) >> ... >> args);
-        }, std::move(t));
+        std::apply([this](auto &... args) {
+            (void)((*this) >> ... >> args);
+        }, t);
         return *this;
     }
 
@@ -188,9 +188,9 @@ public:
         /**
          * @brief 实际的序列化函数，利用折叠表达式展开参数包
          */
-        std::apply([this](auto &&... args) {
+        std::apply([this](auto const&... args) {
             ((*this) << ... << args);
-        }, std::move(t));
+        }, t);
         return *this;
     }
 
