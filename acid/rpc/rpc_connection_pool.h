@@ -82,8 +82,7 @@ public:
             lock.lock();
             // 移除失效连接
             std::vector<std::string>& addrs = m_serviceCache[name];
-            addrs.erase(std::remove(addrs.begin(), addrs.end(),
-                                    conn->second->getSocket()->getRemoteAddress()->toString()));
+            std::erase(addrs, conn->second->getSocket()->getRemoteAddress()->toString());
 
             m_conns.erase(name);
         }
