@@ -57,7 +57,7 @@ bool Timer::refresh() {
     m_next = GetCurrentMS() + m_ms;
     m_manager->m_timers.insert(shared_from_this());
 
-    return false;
+    return true;
 }
 
 bool Timer::reset(uint64_t ms, bool now_time) {
