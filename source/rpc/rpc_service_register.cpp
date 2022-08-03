@@ -100,16 +100,22 @@ void RpcServiceRegistry::handleClient(Socket::ptr client) {
                 response = handleHeartbeatPacket(request);
                 break;
             case Protocol::MsgType::RPC_PROVIDER:
-                ACID_LOG_DEBUG(g_logger) << client->toString();
+                ACID_LOG_INFO(g_logger) << client->toString() << " declared provider";
                 providerAddr = handleProvider(request, client);
                 continue;
             case Protocol::MsgType::RPC_SERVICE_REGISTER:
+                ACID_LOG_INFO(g_logger) << "service[" << 
+                    request->getContent() << "] registering from " << providerAddr->toString();
                 response = handleRegisterService(request, providerAddr);
                 break;
             case Protocol::MsgType::RPC_SERVICE_DISCOVER:
+                ACID_LOG_INFO(g_logger) << "service[" <<
+                    request->getContent() << "] dsicovering";
                 response = handleDiscoverService(request);
                 break;
             case Protocol::MsgType::RPC_SUBSCRIBE_REQUEST:
+                ACID_LOG_INFO(g_logger) << "service[" <<
+                    request->getContent() << "] subscribing"; 
                 response = handleSubscribe(request, session);
                 break;
             case Protocol::MsgType::RPC_PUBLISH_RESPONSE:
