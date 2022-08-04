@@ -2,7 +2,7 @@
  * @Author: Ryu-59073
  * @Date: 2022-06-12 08:01:05
  * @LastEditors: Ryu-59073
- * @LastEditTime: 2022-08-04 07:36:46
+ * @LastEditTime: 2022-08-04 07:49:05
  * @FilePath: /Acid/tests/test_timer.cpp
  * @Description: 计时器测试
  * 
@@ -51,6 +51,6 @@ void test1(){
     }, true);
 }
 int main(){
-    test5();
+    // test5();
     test1();
 }
