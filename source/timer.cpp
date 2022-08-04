@@ -143,10 +143,7 @@ void TimeManager::getExpiredCallbacks(std::vector<std::function<void()>>& cbs) {
     }
     Timer::ptr timer(new Timer(now));
 
-    auto it = m_timers.lower_bound(timer);
-    while(it != m_timers.end() && (*it)->m_next == now) {
-        ++it;
-    }
+    auto it = m_timers.upper_bound(timer);
     expired.insert(expired.begin(), m_timers.begin(), it);
 
     m_timers.erase(m_timers.begin(), it);
