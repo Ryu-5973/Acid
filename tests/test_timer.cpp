@@ -1,6 +1,13 @@
-//
-// Created by zavier on 2021/12/2.
-//
+/*
+ * @Author: Ryu-59073
+ * @Date: 2022-06-12 08:01:05
+ * @LastEditors: Ryu-59073
+ * @LastEditTime: 2022-08-04 07:36:46
+ * @FilePath: /Acid/tests/test_timer.cpp
+ * @Description: 计时器测试
+ * 
+ * Copyright (c) 2022 by Ryu-59073, All Rights Reserved. 
+ */
 
 #include "acid/acid.h"
 #include <iostream>
@@ -28,24 +35,22 @@ void test5(){
         }
         ACID_LOG_INFO(g_logger) << i <<" seconds 2";
     }, true);
-    ioManager.start();
-    //sleep(100);
-
+    getchar();
 }
 acid::Timer::ptr s_timer;
 void test1(){
     acid::IOManager ioManager{};
-    s_timer = ioManager.addTimer(2,[]{
+    ACID_LOG_INFO(g_logger) << "start counting";
+    s_timer = ioManager.addTimer(1, []{
         static int i =0;
-        i++;
-        if(i%1000==0){
-            //s_timer->reset(1,false);
+        i ++;
+        if(i%5000==0){
             s_timer->cancel();
-            //t->refresh();
-            ACID_LOG_INFO(g_logger) << i <<" seconds";
+            ACID_LOG_INFO(g_logger) << "finsh counting, 5 second";
         }
     }, true);
 }
 int main(){
+    test5();
     test1();
 }
