@@ -19,8 +19,7 @@ private:
     static MutexType m_mutex;
 };
 SafeCout::MutexType SafeCout::m_mutex{};
-SafeCout scout;
-// using scout = SafeCout;
+using scout = SafeCout;
     
 } // namespace acid
 
