@@ -10,6 +10,7 @@
 #include "acid/config.h"
 #include "acid/log.h"
 #include "acid/config.h"
+#include "acid/safe_cout.h"
 
 namespace acid{
 static Logger::ptr g_logger = ACID_LOG_NAME("system");
@@ -352,7 +353,7 @@ void StdoutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level leve
             break;
     }
     MutexType::Lock lock(m_mutex);
-    std::cout << color << m_formatter->format(logger,level,event) << "\033[0m" << std::flush;
+    scout << color << m_formatter->format(logger,level,event) << "\033[0m" << std::flush;
 }
 
 YAML::Node StdoutLogAppender::toYaml() {
