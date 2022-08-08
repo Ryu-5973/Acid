@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdarg.h>
 #include <cstring>
+#include <syncstream>
 #include "acid/config.h"
 #include "acid/log.h"
 #include "acid/config.h"
@@ -270,7 +271,7 @@ void Logger::setFormatter(LogFormatter::ptr formatter) {
 void Logger::setFormatter(const std::string &formatter) {
     LogFormatter::ptr new_val(new LogFormatter(formatter));
     if(new_val->getError()){
-        std::cout << "Logger setFormatter name=" << m_name << " value="
+        std::osyncstream(std::cout) << "Logger setFormatter name=" << m_name << " value="
             << formatter <<" invalid formatter" << std::endl;
         return;
     }
@@ -353,7 +354,7 @@ void StdoutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level leve
             break;
     }
     MutexType::Lock lock(m_mutex);
-    scout{} << color << m_formatter->format(logger,level,event) << "\033[0m" << std::flush;
+    std::osyncstream(std::cout) << color << m_formatter->format(logger,level,event) << "\033[0m" << std::flush;
 }
 
 YAML::Node StdoutLogAppender::toYaml() {
@@ -522,14 +523,14 @@ public:
         }else if(type == "filelogappender"){
             if(!node["file"].IsDefined()){
                 res.type = LogAppenderDefine::NONE;
-                std::cout << "Log config error: StdoutLogAppender file is null" << std::endl;
+                std::osyncstream(std::cout) << "Log config error: StdoutLogAppender file is null" << std::endl;
                 return res;
             }
             res.file = node["file"].as<std::string>();
             res.type = LogAppenderDefine::FILELOG;
         }else{
             res.type = LogAppenderDefine::NONE;
-            std::cout << "Log config error: appender type is null" << std::endl;
+            std::osyncstream(std::cout) << "Log config error: appender type is null" << std::endl;
             return res;
         }
 
@@ -576,7 +577,7 @@ public:
             LogDefine ld;
             const YAML::Node& log = node[i];
             if (!log["name"].IsDefined()){
-                std::cout << "Log config error: name is null" << str <<std::endl;
+                std::osyncstream(std::cout) << "Log config error: name is null" << str <<std::endl;
                 continue;
             }
             ld.name = log["name"].as<std::string>();
@@ -731,7 +732,7 @@ void LogAppender::setFormatter(LogFormatter::ptr formatter) {
     MutexType::Lock lock(m_mutex);
 
     if(formatter->getError()){
-        std::cout << "LogAppender setFormatter value="
+        std::osyncstream(std::cout) << "LogAppender setFormatter value="
                   << formatter->getPattern() <<" invalid formatter" << std::endl;
         return;
     }
